@@ -1,10 +1,15 @@
 const path = require('path');
+const http = require('http');
 const express = require('express');
+const socketIO = require('socket.io');
+
 const publicPath = path.join(__dirname, '../public');
 // console.log(__dirname + '/../public'); or like this(way slower)
 // console.log(publicPath);
 
 var app = express();
+var server = http.createServer(app);
+var io = socketIO(server);
 const port = process.env.PORT || 3000;
 // app.get('/',function(req,res){
 //
@@ -12,8 +17,15 @@ const port = process.env.PORT || 3000;
 //
 // }); or use like this
 app.use(express.static(publicPath));
-app.listen(port, () => {
+
+io.on('connection', (socket) => {
+  console.log("New user connected");
+  socket.on('disconnect', () => {
+    console.log("User was disconnected")
+  });
+});
+server.listen(port, () => {
   console.log(`Started on port ${port}`);
 });
-
-module.exports = {app};
+//
+// module.exports = {app};

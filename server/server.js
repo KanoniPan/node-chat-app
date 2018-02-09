@@ -3,7 +3,7 @@ const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
 
-const {generateMessage} = require('./utils/message');
+const {generateMessage, generateLocationMessage} = require('./utils/message');
 const publicPath = path.join(__dirname, '../public');
 // console.log(__dirname + '/../public'); or like this(way slower)
 // console.log(publicPath);
@@ -56,6 +56,11 @@ io.on('connection', (socket) => {
     //   createdAt: new Date().getTime()
     // });
   });
+
+  socket.on('createLocationMessage', (coords) => {
+    //`${coords.latitude},${coords.longitude}`
+    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+  })
 
   socket.on('disconnect', () => {
     console.log("User was disconnected")
